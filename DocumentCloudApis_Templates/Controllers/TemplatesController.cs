@@ -14,14 +14,26 @@ using System.Web.Http;
 using DocumentCloudApis_Templates.Klassen;
 using DocumentCloudApis_Templates.Models;
 using DocumentCloudApis_Templates.Services;
+using System.Web.Http.Description;
 
 namespace DocumentCloudApis_Templates.Controllers
 {
+
+    /// <summary>
+    /// Verwaltet die Templates
+    /// </summary>
     public class TemplatesController : ApiController
     {
         private const string Client = "templates";
 
+        // GET v1/templates/count
+        //-----------------------
+        /// <summary>
+        /// Gibt die Anzahl der Templates zurück
+        /// </summary>
+        /// <returns>Anzahl der Templates</returns>
         [HttpGet]
+        [ResponseType(typeof(Int32))]
         public IHttpActionResult Count()
         {
             int Anzahl;
@@ -38,7 +50,15 @@ namespace DocumentCloudApis_Templates.Controllers
         }
 
 
+        // GET v1/templates/Exits?templateName=Vorlage.docx
+        // ------------------------------------------------
+        /// <summary>
+        /// Prüft ob das Template bereits vorhanden ist.
+        /// </summary>
+        /// <param name="templateName"></param>
+        /// <returns>True oder False</returns>
         [HttpGet]
+        [ResponseType(typeof(Boolean))]
         public IHttpActionResult Exists(string templateName)
         {
             BusinessService bizService = new BusinessService(Client);
@@ -48,7 +68,15 @@ namespace DocumentCloudApis_Templates.Controllers
 
 
 
+        // POST v1/templates/upload?templateName=Vorlage.docx
+        // --------------------------------------------------
+        /// <summary>
+        /// Lädt ein neues Template hoch
+        /// </summary>
+        /// <param name="templateName"></param>
+        /// <returns>Textnachricht</returns>
         [HttpPost]
+        [ResponseType(typeof(String))]
         public async Task<IHttpActionResult> Upload(string templateName)
         {
 
@@ -84,7 +112,14 @@ namespace DocumentCloudApis_Templates.Controllers
         }
 
 
+        // GET v1/templates/list
+        // ------------------------------------
+        /// <summary>
+        /// Gibt eine Liste der vorhanden Templates zurück.
+        /// </summary>
+        /// <returns>Liste von Templates</returns>
         [HttpGet]
+        [ResponseType(typeof(List<Template>))]
         public IHttpActionResult List()
         {
             List<Template> Liste;
@@ -99,8 +134,17 @@ namespace DocumentCloudApis_Templates.Controllers
             return Ok(bizService.List());
         }
 
+
+        // DELETE v1/templates/delete?templateName=Vorlage.docx
+        // ----------------------------------------------------
+        /// <summary>
+        /// Löscht ein vorhandenes Template.
+        /// </summary>
+        /// <param name="templateName"></param>
+        /// <returns>Textnachricht</returns>
         [HttpDelete]
         [Authorize]
+        [ResponseType(typeof(String))]
         public IHttpActionResult Delete(string templateName)
         {
             BusinessService bizService = new BusinessService(Client);
@@ -113,8 +157,15 @@ namespace DocumentCloudApis_Templates.Controllers
             return BadRequest("Template could not be deleted");
         }
 
-
+        // GET v1/templates/download?templateName=Vorlage.docx
+        // ---------------------------------------------------
+        /// <summary>
+        /// Gibt ein Template als Datei zurück.
+        /// </summary>
+        /// <param name="templateName"></param>
+        /// <returns>Template</returns>
         [HttpGet]
+        [ResponseType(typeof(StreamContent))]
         public async Task<HttpResponseMessage> Download(string templateName)
         {
             BusinessService bizService = new BusinessService(Client);
